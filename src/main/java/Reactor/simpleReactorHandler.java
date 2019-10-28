@@ -27,7 +27,7 @@ public class simpleReactorHandler implements Runnable {
         this.socketChannel.configureBlocking(false);
         selectionKey = socketChannel.register(selector,0);
         selectionKey.attach(this);
-        selectionKey.interestOps(SelectionKey.OP_READ);//这设置的意义是什么???
+        selectionKey.interestOps(SelectionKey.OP_READ);//这个就是直接给selectionkey一个定值，等于是说无论什么通道都监控read状态
         selector.wakeup();
     }
     @Override

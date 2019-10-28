@@ -11,9 +11,13 @@ import java.nio.channels.*;
 import java.util.Iterator;
 
 
-/*  TCP的socket读写，由于TCP是有连接的，在服务器端需要分开，使用serverSocketChannel监控连接bind register OP_ACCEPT，
-  socketChannel完成通信 register OP_READ
-    但是UDP是无连接的，所以只需要DatagramChannel而已，DatagramChannel bind，register OP_READ事件，并且使用DatagramChannel来read缓冲区
+/*  1.TCP的socket读写，由于TCP是有连接的，在服务器端需要分开，使用serverSocketChannel监控连接bind register OP_ACCEPT，
+  socketChannel完成通信 register OP_READ；
+    2.但是UDP是无连接的，所以只需要DatagramChannel而已，DatagramChannel bind，register OP_READ事件，并且使用DatagramChannel来read缓冲区；
+    3.selector的事件只要注册就会监控（一个通道只监控一个，但是selector可以监控多个通道的多种事件）；
+    4.accept事件只有产生TCP和UDP连接的时候才会产生连接就绪状态，也就是说只有传递了TCP，UDP连接selector才能捕获连接就绪的通道状态，其他时候都
+  检测不到；
+    5.读和写的通道状态是一直都可以被捕获的，所以如果不关闭通道的话会导致一直执行读写状态里的内容。
  */
 
 public class NIOTCPServer {
@@ -60,7 +64,7 @@ public class NIOTCPServer {
                         IOUtil.close(fileOutputStream);
                         IOUtil.close(fileChannel);
                         socketChannel.shutdownOutput();
-                        IOUtil.close(socketChannel);
+                        IOUtil.close(socketChannel);//如果不关闭这个socket的话，会一直监视并捕捉到socketchannel的读状态
                         System.out.println("文件下载完毕");
                     }
 
