@@ -9,11 +9,9 @@ import java.util.Properties;
 public class NIOConfig {
     static public String  getValue(String key){
         FileInputStream fileInputStream = null;
-        FileChannel fileChannel = null;
         String value = null;
         try{
             fileInputStream = new FileInputStream(new File("src/main/resources/config.properties"));
-            fileChannel = fileInputStream.getChannel();
             Properties properties = new Properties();
             properties.load(fileInputStream);
             Enumeration em = properties.propertyNames();
@@ -26,6 +24,8 @@ public class NIOConfig {
             }
         }catch (Exception e){
             e.printStackTrace();
+        }finally {
+            IOUtil.close(fileInputStream);
         }
         return value;
     }
