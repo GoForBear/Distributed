@@ -1,6 +1,7 @@
 package NIO;
 
 import util.IOUtil;
+import util.NIOConfig;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,7 +11,6 @@ import java.nio.channels.FileChannel;
 
 public class NIOProject {
 
-    private static int capacity = 1024;
 
     public static int copyFile(String srcFileName, String dstFileName){
         File srcFile = new File(srcFileName);
@@ -26,7 +26,7 @@ public class NIOProject {
             fileOutputStream = new FileOutputStream(dstFile);
             inFileChannel = fileInputStream.getChannel();
             outFileChannel = fileOutputStream.getChannel();
-            ByteBuffer byteBuffer = ByteBuffer.allocate(capacity);
+            ByteBuffer byteBuffer = ByteBuffer.allocate(NIOConfig.capacity);
             int length = -1;
             //这里的-1代表文件末尾，因为不能保证一次read完，所以用循环，如果返回-1代表到了文件末尾
             while((length = inFileChannel.read(byteBuffer))!= -1){

@@ -1,8 +1,11 @@
 package util;
 
+import com.sun.org.apache.bcel.internal.generic.Select;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
+import java.nio.channels.SocketChannel;
 
 public class IOUtil {
 
@@ -37,4 +40,15 @@ public class IOUtil {
             }
         }
     }
+
+    public static void close(SocketChannel socketChannel){
+        if( null != socketChannel && socketChannel.isOpen()){
+            try{
+                socketChannel.close();
+            }catch (Exception e){
+                System.out.println("关闭通道异常" + e);
+            }
+        }
+    }
+
 }
