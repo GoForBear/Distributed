@@ -10,28 +10,31 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-
-
-
-public class simpleReactorHandler implements Runnable {
-    private Selector selector;
-    private SocketChannel socketChannel;
-    private SelectionKey selectionKey;
-    private static  final  int RECIEVING = 0, SENDING = 1;
-    private int state = RECIEVING;
-    private ByteBuffer byteBuffer = ByteBuffer.allocate(NIOConfig.capacity);
-    simpleReactorHandler(Selector selector, SocketChannel socketChannel) throws Exception{
-        this.selector = selector;
-        this.socketChannel = socketChannel;
-        this.socketChannel.configureBlocking(false);
-        selectionKey = socketChannel.register(selector,0);
-        selectionKey.attach(this);
-        selectionKey.interestOps(SelectionKey.OP_READ);//这个就是直接给selectionkey一个定值，等于是说无论什么通道都监控read状态
-        selector.wakeup();
+public class ComplicatedHandler implements Runnable {
+     private  Selector selector;
+     private SocketChannel socketChannel;
+     private  SelectionKey selectionKey;
+     static ExecutorService pool = Executors.newFixedThreadPool(4);
+     ByteBuffer byteBuffer = ByteBuffer.allocate(NIOConfig.capacity);
+     ComplicatedHandler(Selector selector, SocketChannel socketChannel) throws  Exception{
+         this.selector = selector;
+         this.socketChannel = socketChannel;
+         socketChannel.configureBlocking(false);
+         selectionKey = socketChannel.register(selector,0);
+         selectionKey.attach(this);
+         selectionKey.interestOps(SelectionKey.OP_READ);//这个就是直接给selectionkey一个定值，等于是说无论什么通道都监控read状态
+         selector.wakeup();
     }
+
     @Override
     public void run() {
+         pool.execute(new AsyncTask());
+    }
+
+    public synchronized  void asyncRun(){
         try{
             if(selectionKey.isWritable()){
                 System.out.println("文件写");
@@ -48,7 +51,6 @@ public class simpleReactorHandler implements Runnable {
                 IOUtil.close(fileChannel);
                 IOUtil.close(fileOutputStream);
                 selectionKey.interestOps(SelectionKey.OP_READ);//这里不执行就会持续循环？？？为啥？？？
-                state =   RECIEVING ;
                 IOUtil.close(socketChannel);
 
             }else if(selectionKey.isReadable()){
@@ -60,13 +62,19 @@ public class simpleReactorHandler implements Runnable {
                 }
                 byteBuffer.flip();
                 selectionKey.interestOps(SelectionKey.OP_WRITE);
-                state = SENDING;
             }
 
         }catch (Exception e){
             e.printStackTrace();
-
+            selectionKey.cancel();
         }
-
     }
+
+    class AsyncTask implements  Runnable{
+        @Override
+        public void run() {
+            ComplicatedHandler.this.asyncRun();
+        }
+    }
+
 }

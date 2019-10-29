@@ -30,12 +30,16 @@ public class simpleReactor implements Runnable {
         while(! Thread.interrupted()){
             try{
                     selector.select();
-                    Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
-                    while(iterator.hasNext()){
-                        SelectionKey selectionKey = iterator.next();
+                    Iterator<SelectionKey> it = selector.selectedKeys().iterator();
+                    while(it.hasNext()){
+                        SelectionKey selectionKey = it.next();
                         dispatch(selectionKey);
                     }
-                    iterator.remove();
+
+//                    it.remove();//这里不能用remove
+                selector.selectedKeys().clear();
+
+
 
 
             }catch (Exception e){
