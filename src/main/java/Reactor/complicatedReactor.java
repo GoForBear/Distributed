@@ -76,7 +76,9 @@ public class complicatedReactor {
             try{
                 SocketChannel socketChannel = serverSocketChannel.accept();
                 if(null != socketChannel){
+                    System.out.println("第" + atomicInteger.get()+"个selector");
                     new ComplicatedHandler(selectors[atomicInteger.get()],socketChannel);
+
                 }
             }catch (Exception e){
                 e.printStackTrace();

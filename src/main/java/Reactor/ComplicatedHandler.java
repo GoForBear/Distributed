@@ -22,7 +22,13 @@ public class ComplicatedHandler implements Runnable {
      ComplicatedHandler(Selector selector, SocketChannel socketChannel) throws  Exception{
          this.selector = selector;
          this.socketChannel = socketChannel;
+         if(socketChannel.isOpen() && socketChannel != null){
+             System.out.println("通道开了");
+         }else{
+             System.out.println("通道关了");
+         }
          socketChannel.configureBlocking(false);
+         selector.wakeup();//这里需要唤醒，不知道为什么这里的selector会被阻塞掉
          selectionKey = socketChannel.register(selector,0);
          selectionKey.attach(this);
          selectionKey.interestOps(SelectionKey.OP_READ);//这个就是直接给selectionkey一个定值，等于是说无论什么通道都监控read状态
