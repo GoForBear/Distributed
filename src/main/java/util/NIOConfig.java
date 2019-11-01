@@ -2,7 +2,6 @@ package util;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.nio.channels.FileChannel;
 import java.util.Enumeration;
 import java.util.Properties;
 

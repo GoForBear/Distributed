@@ -28,6 +28,7 @@ public class simpleReactorHandler implements Runnable {
         selectionKey = socketChannel.register(selector,0);
         selectionKey.attach(this);
         selectionKey.interestOps(SelectionKey.OP_READ);//这个就是直接给selectionkey一个定值，等于是说无论什么通道都监控read状态
+        System.out.println("让我康康");
         selector.wakeup();
     }
     @Override
@@ -47,7 +48,7 @@ public class simpleReactorHandler implements Runnable {
                 fileChannel.force(true);
                 IOUtil.close(fileChannel);
                 IOUtil.close(fileOutputStream);
-                selectionKey.interestOps(SelectionKey.OP_READ);//这里不执行就会持续循环？？？为啥？？？
+                selectionKey.interestOps(SelectionKey.OP_READ);
                 state =   RECIEVING ;
                 IOUtil.close(socketChannel);
 

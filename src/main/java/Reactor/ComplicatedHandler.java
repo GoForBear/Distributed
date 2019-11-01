@@ -36,6 +36,9 @@ public class ComplicatedHandler implements Runnable {
 
     public synchronized  void asyncRun(){
         try{
+            if(!selectionKey.isValid()){ //这里加上判断，如果任何一个异步程序关掉了通道的话，判断selectionKey的合法性，如果不合法说明关掉了，那么就return掉
+                return;
+            }
             if(selectionKey.isWritable()){
                 System.out.println("文件写");
                 socketChannel.write(byteBuffer);
@@ -50,8 +53,8 @@ public class ComplicatedHandler implements Runnable {
                 fileChannel.force(true);
                 IOUtil.close(fileChannel);
                 IOUtil.close(fileOutputStream);
-                selectionKey.interestOps(SelectionKey.OP_READ);//这里不执行就会持续循环？？？为啥？？？
-                IOUtil.close(socketChannel);
+                IOUtil.close(socketChannel);//这里关了会导致线程池的其他线程的selectionKey无效，就会报错，如果不关的话，这边的通道会一直在使用，所以需要在前边判断
+                System.out.println("关了");
 
             }else if(selectionKey.isReadable()){
                 System.out.println("文件读");

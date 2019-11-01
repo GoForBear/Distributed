@@ -30,6 +30,7 @@ public class simpleReactor implements Runnable {
         while(! Thread.interrupted()){
             try{
                     selector.select();
+                    System.out.println("这里又开始了");
                     Iterator<SelectionKey> it = selector.selectedKeys().iterator();
                     while(it.hasNext()){
                         SelectionKey selectionKey = it.next();

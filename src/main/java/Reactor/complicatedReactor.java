@@ -47,6 +47,7 @@ public class complicatedReactor {
             while(! Thread.interrupted()){
                 try{
                     selector.select();
+                    System.out.println("又开始了");
                     Set<SelectionKey> keySet = selector.selectedKeys();
                     Iterator<SelectionKey> it = keySet.iterator();
                     while(it.hasNext()){
