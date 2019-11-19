@@ -31,7 +31,8 @@ public class discardServer {
             serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 protected void initChannel(SocketChannel socketChannel) {
-//                    socketChannel.pipeline().addLast(new discardHandler());
+                    System.out.println("练到了");
+                    socketChannel.pipeline().addLast(new discardHandler());
                 }
             });
             ChannelFuture channelFuture = serverBootstrap.bind().sync();

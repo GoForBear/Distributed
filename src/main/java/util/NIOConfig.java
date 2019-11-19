@@ -10,7 +10,7 @@ public class NIOConfig {
         FileInputStream fileInputStream = null;
         String value = null;
         try{
-            fileInputStream = new FileInputStream(new File("src/main/resources/config.properties"));
+            fileInputStream = new FileInputStream(new File("MyDistributed/src/main/resources/config.properties"));
             Properties properties = new Properties();
             properties.load(fileInputStream);
             Enumeration em = properties.propertyNames();
@@ -31,4 +31,6 @@ public class NIOConfig {
     public static String SOCKET_SERVER_IP = NIOConfig.getValue("SOCKET_SERVER_IP") ;
     public static int SOCKET_SERVER_PORT = Integer.parseInt(NIOConfig.getValue("SOCKET_SERVER_PORT")) ;
     public static int capacity = Integer.parseInt(NIOConfig.getValue("capacity"));
+    public static String REDIS_SERVER_IP = NIOConfig.getValue("REDIS_SERVER_IP") ;
+    public static int REDIS_SERVER_PORT = Integer.parseInt(NIOConfig.getValue("REDIS_SERVER_PORT")) ;
 }
